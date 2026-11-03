@@ -157,7 +157,7 @@ const num1=n=>!isFinite(n)?"–":(Math.round(n*10)/10).toLocaleString("en-US",{m
 const n0=v=>{const x=parseFloat(String(v).replace(/[^0-9.\-]/g,""));return isFinite(x)?x:0;};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let S;
-function fresh(){S={w:Object.fromEntries(CFG.rules.map(r=>[r[0],r[2]])),src:"Platform pixels",vals:Object.fromEntries(CFG.values),rows:CFG.rows.map(r=>r.slice())};}
+function fresh(){S={w:Object.fromEntries(CFG.rules.map(r=>[r[0],r[2]])),vals:Object.fromEntries(CFG.values),rows:CFG.rows.map(r=>r.slice())};}
 
 $("#h1").textContent=CFG.title; $("#lede").textContent=CFG.lede; $("#s3").textContent=CFG.s3; $("#s3p").textContent=CFG.s3p; $("#s4p").textContent=CFG.s4p; $("#note").textContent=CFG.note;
 document.title=CFG.title;
@@ -166,8 +166,7 @@ function renderRules(){
   $("#rules").innerHTML=CFG.rules.map(([k,l,,d])=>`<div class="rule"><label for="w-${k}">${l} <b id="wv-${k}">${S.w[k]}%</b></label><input type="range" id="w-${k}" min="0" max="100" step="5" value="${S.w[k]}" aria-label="${l} weight"><small>${d}</small></div>`).join("");
   CFG.rules.forEach(([k])=>{const el=$("#w-"+k);el.oninput=()=>{S.w[k]=+el.value;$("#wv-"+k).textContent=el.value+"%";renderCheck();renderResults();};});
   if(MODE==="b2b"){
-    $("#extra").innerHTML=`<div style="margin-top:14px;font-size:14px;font-weight:600">Assisted conversions come from</div><div class="seg" role="group" aria-label="Assisted data source">${["Platform pixels","GA4"].map(o=>`<button type="button" data-src="${o}" aria-pressed="${S.src===o}">${o}</button>`).join("")}</div><small style="display:block;font-size:12px;color:var(--mut);margin-top:6px">Choose one, not both, so assisted conversions are never counted twice.</small>`;
-    document.querySelectorAll("[data-src]").forEach(b=>b.onclick=()=>{S.src=b.dataset.src;document.querySelectorAll("[data-src]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.src===S.src));renderResults();});
+    $("#extra").innerHTML=`<small style="display:block;font-size:12px;color:var(--mut);margin-top:12px">Assisted conversions come from each platform's pixel. GA4 reports first, mid, and last touch, but not assisted conversions.</small>`;
   } else $("#extra").innerHTML="";
   renderCheck();
 }
@@ -185,8 +184,8 @@ function inp(i,c,v,cls){return `<input data-r="${i}" data-c="${c}" class="${cls|
 function renderData(){
   let h;
   if(MODE==="b2b"){
-    h=`<tr><th class="t">Channel</th><th class="t">Target</th><th class="t">Tactic</th><th class="t">Conversion tracked</th><th>View-through (pixel)</th><th>Assisted (pixel)</th><th>First touch (GA4)</th><th>Mid touch (GA4)</th><th>Last touch (GA4)</th><th>Assisted (GA4)</th><th>Spend ($)</th></tr>`;
-    h+=S.rows.map((r,i)=>`<tr><td class="t">${inp(i,0,r[0],"txt sm")}</td><td class="t">${inp(i,1,r[1],"txt")}</td><td class="t">${inp(i,2,r[2],"txt")}</td><td class="t">${sel(i,3,r[3])}</td>${[4,5,6,7,8,9,10].map(c=>`<td>${inp(i,c,r[c])}</td>`).join("")}</tr>`).join("");
+    h=`<tr><th class="t">Channel</th><th class="t">Target</th><th class="t">Tactic</th><th class="t">Conversion tracked</th><th>View-through (pixel)</th><th>Assisted (pixel)</th><th>First touch (GA4)</th><th>Mid touch (GA4)</th><th>Last touch (GA4)</th><th>Spend ($)</th></tr>`;
+    h+=S.rows.map((r,i)=>`<tr><td class="t">${inp(i,0,r[0],"txt sm")}</td><td class="t">${inp(i,1,r[1],"txt")}</td><td class="t">${inp(i,2,r[2],"txt")}</td><td class="t">${sel(i,3,r[3])}</td>${[4,5,6,7,8,10].map(c=>`<td>${inp(i,c,r[c])}</td>`).join("")}</tr>`).join("");
   } else {
     h=`<tr><th class="t">Media group</th><th class="t">Channel</th><th class="t">Targeting</th><th class="t">Conversion tracked</th><th>Direct response</th><th>View-through / HH match</th><th>Spike lift</th><th>Spend ($)</th><th>Impressions</th></tr>`;
     let last="";
@@ -204,7 +203,7 @@ function calc(){
   return S.rows.map(r=>{
     const val=S.vals[r[3]]||0;let o={r,val};
     if(MODE==="b2b"){
-      const assisted=S.src==="GA4"?r[9]:r[5];
+      const assisted=r[5];
       o.wtd=r[4]*w("view")+assisted*w("assist")+r[6]*w("first")+r[7]*w("mid")+r[8]*w("last");
       o.spend=r[10];o.last=r[8];o.cpl=o.last?o.spend/o.last:NaN;o.label=`${r[0]} · ${r[1]}`;
     } else {
@@ -245,8 +244,8 @@ function renderResults(){
   $("#ins").innerHTML=ins.map(([t,b,c])=>`<div class="ins ${c}"><b>${t}</b>${b.replace(/<\/?b2>/g,m=>m.includes("/")?"</strong>":"<strong>")}</div>`).join("");
   postH();
 }
-function postH(){try{parent.postMessage({nusparkAttrHeight:document.documentElement.scrollHeight},"*");}catch(e){}}
-window.addEventListener("resize",postH);
+function postH(){try{parent.postMessage({nusparkAttrHeight:Math.ceil(document.body.getBoundingClientRect().height)},"*");}catch(e){}}
+window.addEventListener("resize",postH);try{new ResizeObserver(postH).observe(document.body);}catch(e){}
 $("#reset").onclick=()=>{fresh();renderRules();renderVals();renderData();renderResults();};
 fresh();renderRules();renderVals();renderData();renderResults();setTimeout(postH,300);
 })();
