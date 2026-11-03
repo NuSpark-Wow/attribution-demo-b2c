@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Attribution Model Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b1f3a;--mut:#5b6b80;--line:#dde5ee;--bg:#f5f8fc;--card:#fff;--blue:#2f7cf6;--teal:#14a99a;--green:#1fae5b;--red:#d64545;--amber:#c27c0e;--soft:#eef4fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg);padding:24px 16px 28px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto}
+.eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);background:#e3f6f3;padding:5px 12px;border-radius:999px}
+h1{font-size:32px;font-weight:800;margin:10px 0 4px;letter-spacing:-.3px}
+.lede{color:var(--mut);font-size:16px;max-width:780px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px}
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.num{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+.sh h2{font-size:18px;font-weight:700}
+.sh p{color:var(--mut);font-size:14px}
+.sh .right{margin-left:auto}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.rule{border:1px solid var(--line);border-radius:12px;padding:12px}
+.rule label{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+.rule label b{color:var(--blue)}
+.rule small{display:block;font-size:12px;color:var(--mut);margin-top:6px;line-height:1.35}
+input[type=range]{width:100%;margin-top:8px;accent-color:var(--blue)}
+.check{margin-top:12px;font-size:14px;padding:9px 12px;border-radius:9px}
+.check.ok{background:#eaf7ef;color:#16733d}.check.bad{background:#fdecec;color:#a12f2f}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:8px}
+.seg button{font:inherit;font-size:13px;font-weight:600;border:0;background:#fff;color:var(--ink);padding:8px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.val{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px}
+.val input{width:58px}
+input,select{font:inherit;font-size:14px;color:var(--ink);border:1px solid #c9d6e4;border-radius:8px;padding:6px 8px;background:#fff}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #9cc0ff;outline-offset:2px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{background:var(--ink);color:#fff;font-weight:600;font-size:12px;text-align:center;white-space:normal;line-height:1.2}
+td.t,th.t{text-align:left}
+td input{width:72px;text-align:right;padding:5px 6px}
+td input.txt{width:230px;text-align:left}
+#data td:last-child input{width:100px}
+td input.txt.sm{width:120px}
+td select{max-width:180px;padding:5px 6px}
+tr.tot td{background:#e8f4ec;font-weight:700}
+tr.grp td{background:#f7fafd;font-size:11.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);text-align:left}
+.btn{font:inherit;font-size:13px;font-weight:600;border:1px solid #c9d6e4;background:#fff;color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
+.swipe{display:none;font-size:12.5px;color:var(--mut);margin:-4px 0 8px}
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:14px}
+.ins{border-radius:12px;padding:14px 16px;font-size:14.5px;border-left:4px solid var(--green);background:#eef8f2}
+.ins.warn{border-left-color:var(--amber);background:#fdf6e9}
+.ins.blue{border-left-color:var(--blue);background:#eef4ff}
+.ins b{display:block;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.bars{margin-top:16px;display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:200px 1fr 90px;gap:10px;align-items:center;font-size:13.5px}
+.bar .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{height:12px;background:var(--soft);border-radius:999px;overflow:hidden}
+.track div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--teal),var(--green));transition:width .3s}
+.bar .a{text-align:right;font-weight:700}
+.legend{font-size:12.5px;color:var(--mut);margin-top:8px}
+.note{font-size:12.5px;color:var(--mut);margin-top:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+h3{font-size:15px;margin:2px 0 8px}
+.best td{background:#eaf7ef}
+@media (max-width:820px){.two{grid-template-columns:1fr}.bar{grid-template-columns:120px 1fr 70px}.swipe{display:block}}
+@media (max-width:480px){h1{font-size:26px}.step{padding:16px}}
+@media (prefers-reduced-motion:reduce){.track div{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow">NuSpark Marketing · Interactive demo</span>
+  <h1 id="h1"></h1>
+  <p class="lede" id="lede"></p>
+
+  <section class="step"><div class="sh"><div class="num">1</div><h2>Attribution rules</h2><p>The business decision, agreed before launch.</p><button class="btn right" id="reset" type="button">Reset to sample</button></div>
+    <div class="rules" id="rules"></div><div id="check"></div><div id="extra"></div></section>
+
+  <section class="step"><div class="sh"><div class="num">2</div><h2>Conversion values</h2><p>1–10 scale: 10 = closest to revenue.</p></div>
+    <div class="vals" id="vals"></div></section>
+
+  <section class="step"><div class="sh"><div class="num">3</div><h2 id="s3"></h2><p id="s3p"></p></div>
+    <p class="swipe">Swipe the table sideways to see every column.</p>
+    <div class="tablewrap"><table id="data"></table></div>
+    <p class="legend">Every white cell is editable. Change a number and the results below update instantly.</p></section>
+
+  <section class="step"><div class="sh"><div class="num">4</div><h2>Results</h2><p id="s4p"></p></div>
+    <div class="tablewrap"><table id="res"></table></div>
+    <div class="insights" id="ins"></div>
+    <div id="viz"></div></section>
+
+  <p class="note" id="note"></p>
+</div>
+<script>
+(function(){
+"use strict";
+const MODE="b2c";
+const CFG={
+ b2b:{title:"B2B Attribution Model Demo",lede:"See how the attribution rules you agree on change which channels really deliver. Adjust the weights, conversion values, and channel results, and compare weighted cost per conversion with last click.",
+  s3:"Channel results: platform pixels + GA4 paths",s3p:"View-through and assisted from each platform's pixel; first, mid, and last touch from GA4.",
+  s4p:"Weighted cost per conversion vs. last click, by channel.",
+  rules:[["view","View-through",10,"Credit when someone saw an ad, did not click, and converted"],["first","First click",30,"The touch that started the journey"],["mid","Mid click",20,"Touches in the middle of the journey"],["last","Last click",40,"The touch right before converting"],["assist","Assisted",25,"Separate weight for assisted conversions"]],
+  touch:["view","first","mid","last"],
+  values:[["Schedule a Demo",9],["Free Consultation",9],["Get a Quote Request",8],["Free Assessment",8],["Product Trial Signup",8],["Call",7],["Contact Form Submission",7],["Chat Inquiry",5],["Webinar Signup",4],["Guide/Whitepaper Download",4],["Newsletter Signup",2]],
+  rows:[["Paid Search","Brand + non-brand","Responsive search ads, demo keywords","Schedule a Demo",0,6,4,3,9,5,6000],
+   ["LinkedIn","ICP: VP / Director","Sponsored content + document ads","Guide/Whitepaper Download",14,8,7,3,3,6,5000],
+   ["LinkedIn","Retargeting","Conversation ads, consultation offer","Free Consultation",6,4,1,2,3,3,1500],
+   ["Facebook","Lookalike: B2B decision makers","Lead gen form ads, guide offer","Guide/Whitepaper Download",9,3,3,1,1,2,2000],
+   ["Instagram","Retargeting: site + engagers","Reels + story ads, consultation offer","Free Consultation",5,2,1,2,1,2,1200],
+   ["Reddit","Industry subreddits","Promoted posts, guide offer","Guide/Whitepaper Download",4,2,2,1,1,1,1000],
+   ["Display / Programmatic","ABM account list","Account-based display banners","Guide/Whitepaper Download",10,3,3,2,1,4,3000],
+   ["Retargeting","Website visitors","Site retargeting, demo offer","Schedule a Demo",8,5,0,3,4,3,1200],
+   ["Trade Publication","Industry readers","Run-of-site display banners","Get a Quote Request",3,2,2,1,1,1,2500],
+   ["Trade Publication","Subscriber list","Dedicated sponsor eBlast","Guide/Whitepaper Download",0,3,3,1,2,1,2000],
+   ["Content Syndication","ICP titles (Network 1)","Guide syndication, cost per lead","Guide/Whitepaper Download",0,2,10,2,6,3,4000],
+   ["Email","Nurture list","3-step nurture sequence","Free Consultation",0,4,0,3,5,2,300],
+   ["Trade Journal Print","Industry readers","Half-page ad with QR code","Call",0,0,1,0,2,0,3500],
+   ["Direct Mail","Target accounts","Postcard with QR + call number","Free Assessment",0,0,2,0,2,1,2200]],
+  note:"Demo with sample data for illustration. Real reports use each client's platform exports, GA4 conversion paths, and CRM data, with the attribution rules agreed before the campaign starts."},
+ b2c:{title:"B2C Media Attribution Demo",lede:"Compare TV, radio, streaming, and digital on one scale. Adjust how direct response, household-matched view-through, and spike lift are credited, and see which channels and targeting strategies deliver.",
+  s3:"Media results: TV, radio, streaming, and digital",s3p:"Direct response, view-through or household match, and spike lift by channel and targeting.",
+  s4p:"Weighted cost per conversion by channel, media group, and targeting strategy.",
+  rules:[["direct","Direct response",100,"Calls, texts, promo codes, vanity URLs, QR scans, and clicks that convert"],["vth","View-through / household match",30,"Households that saw the ad and converted later, matched by IP"],["spike","Spike lift",15,"Web conversions in the minutes right after a TV or radio airing"]],
+  values:[["Appointment Booked",9],["Free Estimate / Quote",8],["Application",8],["Call",7],["Promo Code Redemption",7],["Offer Sign-up",6],["Text-to-Offer",5],["Coupon Download",4],["Event Registration",4],["Email / SMS Signup",3]],
+  rows:[["Linear TV","Broadcast TV","Demo: Adults 35-64, news + prime","Appointment Booked",40,0,18,25000,3000000],
+   ["Linear TV","Cable TV","Demo: Adults 25-54, zones + networks","Free Estimate / Quote",28,0,10,12000,1500000],
+   ["Linear TV","Addressable TV","3rd-party household data","Free Estimate / Quote",14,22,0,9000,400000],
+   ["Streaming Video","CTV","Demo: Adults 25-54 + household income","Offer Sign-up",9,20,0,6000,300000],
+   ["Streaming Video","CTV","3rd-party audience data","Offer Sign-up",12,35,0,10000,450000],
+   ["Streaming Video","CTV","1st-party customer list match","Appointment Booked",10,20,0,5000,180000],
+   ["Streaming Video","OTT","3rd-party audience data","Offer Sign-up",8,18,0,6000,300000],
+   ["Audio","Radio On-Air","Demo: Adults 35-64, drive time","Call",30,0,8,8000,2200000],
+   ["Audio","Streaming Radio","3rd-party audience data","Text-to-Offer",9,12,0,3000,400000],
+   ["Audio","SiriusXM","Demo: Adults 35-64, channels + streaming","Promo Code Redemption",7,6,0,4000,500000],
+   ["Search","Paid Search","Intent: brand + local service keywords","Appointment Booked",45,0,0,6000,150000],
+   ["Search","ChatGPT Ads","Intent: conversational topics + prompts","Free Estimate / Quote",10,4,0,2500,120000],
+   ["Social","Facebook","Demo: Adults 35-64 + interests","Offer Sign-up",22,12,0,3000,550000],
+   ["Social","Facebook","1st-party customer lookalike","Offer Sign-up",16,8,0,2000,350000],
+   ["Social","Instagram","Demo: Adults 25-44 + interests","Offer Sign-up",12,10,0,2000,450000],
+   ["Social","TikTok","Demo: Adults 18-34 + interests","Offer Sign-up",9,11,0,2000,600000],
+   ["Video","YouTube","1st-party list + custom intent","Free Estimate / Quote",16,14,0,5000,600000],
+   ["Display & Native","Native Ads","Contextual: home + lifestyle content","Offer Sign-up",8,10,0,2500,800000],
+   ["Display & Native","Display","3rd-party audience data","Offer Sign-up",6,14,0,2500,1200000],
+   ["Retargeting","Retargeting","1st-party site visitors","Free Estimate / Quote",12,15,0,1500,300000]],
+  tvGroups:["Linear TV","Streaming Video","Audio"],
+  strategies:[["Demo targeting","Demo:"],["3rd-party data","3rd-party"],["1st-party data","1st-party"],["Intent (keywords, prompts)","Intent:"],["Contextual","Contextual:"]],
+  note:"Demo with sample data for illustration. TV and radio are measured by tracked calls, texts, promo codes, vanity URLs, QR codes, spike lift, and household matching. Real reports use each client's media and CRM data, with the rules agreed before the campaign starts."}
+}[MODE];
+
+const $=s=>document.querySelector(s);
+const money=n=>!isFinite(n)?"–":"$"+Math.round(n).toLocaleString("en-US");
+const num1=n=>!isFinite(n)?"–":(Math.round(n*10)/10).toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:1});
+const n0=v=>{const x=parseFloat(String(v).replace(/[^0-9.\-]/g,""));return isFinite(x)?x:0;};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let S;
+function fresh(){S={w:Object.fromEntries(CFG.rules.map(r=>[r[0],r[2]])),src:"Platform pixels",vals:Object.fromEntries(CFG.values),rows:CFG.rows.map(r=>r.slice())};}
+
+$("#h1").textContent=CFG.title; $("#lede").textContent=CFG.lede; $("#s3").textContent=CFG.s3; $("#s3p").textContent=CFG.s3p; $("#s4p").textContent=CFG.s4p; $("#note").textContent=CFG.note;
+document.title=CFG.title;
+
+function renderRules(){
+  $("#rules").innerHTML=CFG.rules.map(([k,l,,d])=>`<div class="rule"><label for="w-${k}">${l} <b id="wv-${k}">${S.w[k]}%</b></label><input type="range" id="w-${k}" min="0" max="100" step="5" value="${S.w[k]}" aria-label="${l} weight"><small>${d}</small></div>`).join("");
+  CFG.rules.forEach(([k])=>{const el=$("#w-"+k);el.oninput=()=>{S.w[k]=+el.value;$("#wv-"+k).textContent=el.value+"%";renderCheck();renderResults();};});
+  if(MODE==="b2b"){
+    $("#extra").innerHTML=`<div style="margin-top:14px;font-size:14px;font-weight:600">Assisted conversions come from</div><div class="seg" role="group" aria-label="Assisted data source">${["Platform pixels","GA4"].map(o=>`<button type="button" data-src="${o}" aria-pressed="${S.src===o}">${o}</button>`).join("")}</div><small style="display:block;font-size:12px;color:var(--mut);margin-top:6px">Choose one, not both, so assisted conversions are never counted twice.</small>`;
+    document.querySelectorAll("[data-src]").forEach(b=>b.onclick=()=>{S.src=b.dataset.src;document.querySelectorAll("[data-src]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.src===S.src));renderResults();});
+  } else $("#extra").innerHTML="";
+  renderCheck();
+}
+function renderCheck(){
+  if(MODE!=="b2b"){$("#check").innerHTML="";return;}
+  const t=CFG.touch.reduce((s,k)=>s+S.w[k],0);
+  $("#check").innerHTML=`<div class="check ${t===100?"ok":"bad"}">Touch weights total <b>${t}%</b>${t===100?". The split is complete.":". Adjust so view, first, mid, and last add up to 100%."}</div>`;
+}
+function renderVals(){
+  $("#vals").innerHTML=Object.entries(S.vals).map(([n,v],i)=>`<div class="val"><span>${esc(n)}</span><input type="number" min="1" max="10" data-v="${i}" value="${v}" aria-label="${esc(n)} value"></div>`).join("");
+  document.querySelectorAll("[data-v]").forEach(el=>el.oninput=()=>{const n=Object.keys(S.vals)[+el.dataset.v];S.vals[n]=Math.max(0,Math.min(10,n0(el.value)));renderResults();});
+}
+function sel(i,c,cur){return `<select data-r="${i}" data-c="${c}" aria-label="Conversion tracked">${Object.keys(S.vals).map(n=>`<option${n===cur?" selected":""}>${esc(n)}</option>`).join("")}</select>`;}
+function inp(i,c,v,cls){return `<input data-r="${i}" data-c="${c}" class="${cls||""}" value="${esc(typeof v==="number"?v.toLocaleString("en-US"):v)}" ${cls?"":'inputmode="decimal"'} aria-label="value">`;}
+function renderData(){
+  let h;
+  if(MODE==="b2b"){
+    h=`<tr><th class="t">Channel</th><th class="t">Target</th><th class="t">Tactic</th><th class="t">Conversion tracked</th><th>View-through (pixel)</th><th>Assisted (pixel)</th><th>First touch (GA4)</th><th>Mid touch (GA4)</th><th>Last touch (GA4)</th><th>Assisted (GA4)</th><th>Spend ($)</th></tr>`;
+    h+=S.rows.map((r,i)=>`<tr><td class="t">${inp(i,0,r[0],"txt sm")}</td><td class="t">${inp(i,1,r[1],"txt")}</td><td class="t">${inp(i,2,r[2],"txt")}</td><td class="t">${sel(i,3,r[3])}</td>${[4,5,6,7,8,9,10].map(c=>`<td>${inp(i,c,r[c])}</td>`).join("")}</tr>`).join("");
+  } else {
+    h=`<tr><th class="t">Media group</th><th class="t">Channel</th><th class="t">Targeting</th><th class="t">Conversion tracked</th><th>Direct response</th><th>View-through / HH match</th><th>Spike lift</th><th>Spend ($)</th><th>Impressions</th></tr>`;
+    let last="";
+    S.rows.forEach((r,i)=>{const tv=CFG.tvGroups.includes(r[0]);const sec=tv?"TV & radio":"Digital";if(sec!==last){h+=`<tr class="grp"><td colspan="9">${sec}</td></tr>`;last=sec;}
+      h+=`<tr><td class="t">${esc(r[0])}</td><td class="t">${inp(i,1,r[1],"txt sm")}</td><td class="t">${inp(i,2,r[2],"txt")}</td><td class="t">${sel(i,3,r[3])}</td><td>${inp(i,4,r[4])}</td><td>${inp(i,5,r[5])}</td><td>${tv?inp(i,6,r[6]):'<span style="color:var(--mut)">n/a</span>'}</td><td>${inp(i,7,r[7])}</td><td>${inp(i,8,r[8])}</td></tr>`;});
+  }
+  $("#data").innerHTML=h;
+  document.querySelectorAll("#data [data-r]").forEach(el=>{
+    const ev=el.tagName==="SELECT"?"onchange":"oninput";
+    el[ev]=()=>{const i=+el.dataset.r,c=+el.dataset.c;S.rows[i][c]=(el.classList.contains("txt")||el.tagName==="SELECT")?el.value:n0(el.value);renderResults();};
+  });
+}
+function calc(){
+  const w=k=>S.w[k]/100;
+  return S.rows.map(r=>{
+    const val=S.vals[r[3]]||0;let o={r,val};
+    if(MODE==="b2b"){
+      const assisted=S.src==="GA4"?r[9]:r[5];
+      o.wtd=r[4]*w("view")+assisted*w("assist")+r[6]*w("first")+r[7]*w("mid")+r[8]*w("last");
+      o.spend=r[10];o.last=r[8];o.cpl=o.last?o.spend/o.last:NaN;o.label=`${r[0]} · ${r[1]}`;
+    } else {
+      o.wtd=r[4]*w("direct")+r[5]*w("vth")+(CFG.tvGroups.includes(r[0])?r[6]*w("spike"):0);
+      o.spend=r[7];o.direct=r[4];o.cpd=o.direct?o.spend/o.direct:NaN;o.cpm=r[8]?o.spend/r[8]*1000:NaN;o.imp=r[8];o.label=`${r[1]} · ${r[2]}`;
+    }
+    o.adj=o.wtd*val/10;o.cpw=o.adj?o.spend/o.adj:NaN;return o;});
+}
+function agg(list){const t={wtd:0,adj:0,spend:0,last:0,direct:0,imp:0};list.forEach(o=>{for(const k in t)t[k]+=o[k]||0;});t.cpw=t.adj?t.spend/t.adj:NaN;t.cpl=t.last?t.spend/t.last:NaN;t.cpd=t.direct?t.spend/t.direct:NaN;t.cpm=t.imp?t.spend/t.imp*1000:NaN;return t;}
+function renderResults(){
+  const R=calc(),T=agg(R);
+  const valid=R.filter(o=>isFinite(o.cpw));const best=valid.length?valid.reduce((a,b)=>a.cpw<b.cpw?a:b):null;
+  let h,ins=[];
+  if(MODE==="b2b"){
+    h=`<tr><th class="t">Channel</th><th class="t">Target</th><th>Value</th><th>Total weighted conv.</th><th>Value-adjusted conv.</th><th>Spend</th><th>Cost per weighted conv.</th><th>Last-click conv.</th><th>Cost per last click</th></tr>`;
+    h+=R.map(o=>`<tr class="${o===best?"best":""}"><td class="t">${esc(o.r[0])}</td><td class="t">${esc(o.r[1])}</td><td>${o.val}</td><td>${num1(o.wtd)}</td><td>${num1(o.adj)}</td><td>${money(o.spend)}</td><td><b>${money(o.cpw)}</b></td><td>${o.last}</td><td>${money(o.cpl)}</td></tr>`).join("");
+    h+=`<tr class="tot"><td class="t">Total</td><td></td><td></td><td>${num1(T.wtd)}</td><td>${num1(T.adj)}</td><td>${money(T.spend)}</td><td>${money(T.cpw)}</td><td>${T.last}</td><td>${money(T.cpl)}</td></tr>`;
+    const both=R.filter(o=>isFinite(o.cpw)&&isFinite(o.cpl));
+    if(best)ins.push(["Strongest channel",`<b2>${esc(best.label)}</b2> delivers the lowest cost per weighted conversion at <strong>${money(best.cpw)}</strong>.`,""]);
+    if(both.length){const over=both.reduce((a,b)=>a.cpw/a.cpl>b.cpw/b.cpl?a:b);const under=both.reduce((a,b)=>a.cpw/a.cpl<b.cpw/b.cpl?a:b);
+      if(over.cpw>over.cpl)ins.push(["Looks better on last click",`<strong>${esc(over.label)}</strong> costs ${money(over.cpl)} per last click, but ${money(over.cpw)} once every touch and conversion value is counted.`,"warn"]);
+      if(under.cpw<under.cpl)ins.push(["Undervalued by last click",`<strong>${esc(under.label)}</strong> looks expensive on last click (${money(under.cpl)}) but costs ${money(under.cpw)} per weighted conversion. It assists more than it closes.`,"blue"]);}
+    $("#viz").innerHTML="";
+  } else {
+    h=`<tr><th class="t">Media group</th><th class="t">Channel</th><th class="t">Targeting</th><th>Weighted conv.</th><th>Value-adj. conv.</th><th>Spend</th><th>Cost per weighted conv.</th><th>Direct response</th><th>Cost per direct response</th><th>CPM</th></tr>`;
+    h+=R.map(o=>`<tr class="${o===best?"best":""}"><td class="t">${esc(o.r[0])}</td><td class="t">${esc(o.r[1])}</td><td class="t">${esc(o.r[2])}</td><td>${num1(o.wtd)}</td><td>${num1(o.adj)}</td><td>${money(o.spend)}</td><td><b>${money(o.cpw)}</b></td><td>${o.direct}</td><td>${money(o.cpd)}</td><td>${isFinite(o.cpm)?"$"+o.cpm.toFixed(2):"–"}</td></tr>`).join("");
+    h+=`<tr class="tot"><td class="t">Total</td><td></td><td></td><td>${num1(T.wtd)}</td><td>${num1(T.adj)}</td><td>${money(T.spend)}</td><td>${money(T.cpw)}</td><td>${T.direct}</td><td>${money(T.cpd)}</td><td>${isFinite(T.cpm)?"$"+T.cpm.toFixed(2):"–"}</td></tr>`;
+    const groups=[...new Set(S.rows.map(r=>r[0]))].map(g=>[g,agg(R.filter(o=>o.r[0]===g))]);
+    const strat=CFG.strategies.map(([l,p])=>[l,agg(R.filter(o=>String(o.r[2]).trim().startsWith(p)))]).filter(x=>x[1].spend>0);
+    const tbl=(title,list)=>{const mx=Math.max(...list.map(x=>isFinite(x[1].cpw)?x[1].cpw:0),1);return `<div><h3>${title}</h3><div class="bars">${list.map(([l,t])=>`<div class="bar"><span class="n" title="${esc(l)}">${esc(l)}</span><div class="track"><div style="width:${isFinite(t.cpw)?Math.max(4,t.cpw/mx*100):0}%"></div></div><span class="a">${money(t.cpw)}</span></div>`).join("")}</div></div>`;};
+    $("#viz").innerHTML=`<div class="two">${tbl("Cost per weighted conversion by media group",groups)}${tbl("Cost per weighted conversion by targeting strategy",strat)}</div><p class="legend">Shorter bar = more efficient.</p>`;
+    if(best)ins.push(["Strongest channel",`<strong>${esc(best.label)}</strong> delivers the lowest cost per weighted conversion at <strong>${money(best.cpw)}</strong>.`,""]);
+    const sv=strat.filter(x=>isFinite(x[1].cpw));if(sv.length){const bs=sv.reduce((a,b)=>a[1].cpw<b[1].cpw?a:b);const vol=sv.reduce((a,b)=>a[1].wtd>b[1].wtd?a:b);
+      ins.push(["Most efficient targeting",`<strong>${esc(bs[0])}</strong> costs ${money(bs[1].cpw)} per weighted conversion.`,"blue"]);
+      if(vol[0]!==bs[0])ins.push(["Most volume",`<strong>${esc(vol[0])}</strong> drives the most weighted conversions (${num1(vol[1].wtd)}), at ${money(vol[1].cpw)} each. Reach and efficiency work together.`,"warn"]);}
+  }
+  $("#res").innerHTML=h;
+  $("#ins").innerHTML=ins.map(([t,b,c])=>`<div class="ins ${c}"><b>${t}</b>${b.replace(/<\/?b2>/g,m=>m.includes("/")?"</strong>":"<strong>")}</div>`).join("");
+  postH();
+}
+function postH(){try{parent.postMessage({nusparkAttrHeight:document.documentElement.scrollHeight},"*");}catch(e){}}
+window.addEventListener("resize",postH);
+$("#reset").onclick=()=>{fresh();renderRules();renderVals();renderData();renderResults();};
+fresh();renderRules();renderVals();renderData();renderResults();setTimeout(postH,300);
+})();
+</script>
+</body>
+</html>
