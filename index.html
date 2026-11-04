@@ -103,8 +103,8 @@ const CFG={
  b2b:{title:"B2B Attribution Model Demo",lede:"See how the attribution rules you agree on change which channels really deliver. Adjust the weights, conversion values, and channel results, and compare weighted cost per conversion with last click.",
   s3:"Channel results: platform pixels + GA4 paths",s3p:"View-through and assisted from each platform's pixel; first, mid, and last touch from GA4.",
   s4p:"Weighted cost per conversion vs. last click, by channel.",
-  rules:[["view","View-through",10,"Credit when someone saw an ad, did not click, and converted"],["first","First click",30,"The touch that started the journey"],["mid","Mid click",20,"Touches in the middle of the journey"],["last","Last click",40,"The touch right before converting"],["assist","Assisted",25,"Separate weight for assisted conversions"]],
-  touch:["view","first","mid","last"],
+  rules:[["first","First click",30,"The touch that started the journey"],["mid","Mid click",20,"Touches in the middle of the journey"],["last","Last click",50,"The touch right before converting"],["view","View-through",10,"Separate weight: saw an ad, did not click, and converted"],["assist","Assisted",25,"Separate weight for assisted conversions"]],
+  touch:["first","mid","last"],
   values:[["Schedule a Demo",9],["Free Consultation",9],["Get a Quote Request",8],["Free Assessment",8],["Product Trial Signup",8],["Call",7],["Contact Form Submission",7],["Chat Inquiry",5],["Webinar Signup",4],["Guide/Whitepaper Download",4],["Newsletter Signup",2]],
   rows:[["Paid Search","Brand + non-brand","Responsive search ads, demo keywords","Schedule a Demo",0,6,4,3,9,5,6000],
    ["LinkedIn","ICP: VP / Director","Sponsored content + document ads","Guide/Whitepaper Download",14,8,7,3,3,6,5000],
@@ -173,7 +173,7 @@ function renderRules(){
 function renderCheck(){
   if(MODE!=="b2b"){$("#check").innerHTML="";return;}
   const t=CFG.touch.reduce((s,k)=>s+S.w[k],0);
-  $("#check").innerHTML=`<div class="check ${t===100?"ok":"bad"}">Touch weights total <b>${t}%</b>${t===100?". The split is complete.":". Adjust so view, first, mid, and last add up to 100%."}</div>`;
+  $("#check").innerHTML=`<div class="check ${t===100?"ok":"bad"}">Touch weights total <b>${t}%</b>${t===100?". The split is complete.":". Adjust so first, mid, and last click add up to 100%."}</div>`;
 }
 function renderVals(){
   $("#vals").innerHTML=Object.entries(S.vals).map(([n,v],i)=>`<div class="val"><span>${esc(n)}</span><input type="number" min="1" max="10" data-v="${i}" value="${v}" aria-label="${esc(n)} value"></div>`).join("");
