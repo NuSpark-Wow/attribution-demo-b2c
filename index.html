@@ -121,21 +121,21 @@ const CFG={
    ["Trade Journal Print","Industry readers","Half-page ad with QR code","Call",0,0,1,0,2,0,3500],
    ["Direct Mail","Target accounts","Postcard with QR + call number","Free Assessment",0,0,2,0,2,1,2200]],
   note:"Demo with sample data for illustration. Real reports use each client's platform exports, GA4 conversion paths, and CRM data, with the attribution rules agreed before the campaign starts."},
- b2c:{title:"B2C Media Attribution Demo",lede:"Compare TV, radio, streaming, and digital on one scale. Adjust how direct response, household-matched view-through, and spike lift are credited, and see which channels and targeting strategies deliver.",
-  s3:"Media results: TV, radio, streaming, and digital",s3p:"Direct response, view-through or household match, and spike lift by channel and targeting.",
+ b2c:{title:"B2C Media Attribution Demo",lede:"Compare TV, radio, streaming, and digital on one scale. Adjust how conversions and digital view-through are credited, change what each lead is worth, and see which channels and targeting strategies deliver.",
+  s3:"Media results: TV, radio, streaming, and digital",s3p:"Conversions by channel and targeting. View-through applies to digital only.",
   s4p:"Weighted cost per conversion by channel, media group, and targeting strategy.",
-  rules:[["direct","Direct response",100,"Calls, texts, promo codes, vanity URLs, QR scans, and clicks that convert"],["vth","View-through / household match",30,"Households that saw the ad and converted later, matched by IP"],["spike","Spike lift",15,"Web conversions in the minutes right after a TV or radio airing"]],
+  rules:[["direct","Conversions",100,"Calls, texts, promo codes, vanity URLs, QR scans, and clicks that convert"],["vth","View-through (digital)",30,"Digital only: saw an ad, did not click, and converted later"]],
   values:[["Appointment Booked",9],["Free Estimate / Quote",8],["Application",8],["Call",7],["Promo Code Redemption",7],["Offer Sign-up",6],["Text-to-Offer",5],["Coupon Download",4],["Event Registration",4],["Email / SMS Signup",3]],
-  rows:[["Linear TV","Broadcast TV","Demo: Adults 35-64, news + prime","Appointment Booked",40,0,18,25000,3000000],
-   ["Linear TV","Cable TV","Demo: Adults 25-54, zones + networks","Free Estimate / Quote",28,0,10,12000,1500000],
-   ["Linear TV","Addressable TV","3rd-party household data","Free Estimate / Quote",14,22,0,9000,400000],
-   ["Streaming Video","CTV","Demo: Adults 25-54 + household income","Offer Sign-up",9,20,0,6000,300000],
-   ["Streaming Video","CTV","3rd-party audience data","Offer Sign-up",12,35,0,10000,450000],
-   ["Streaming Video","CTV","1st-party customer list match","Appointment Booked",10,20,0,5000,180000],
-   ["Streaming Video","OTT","3rd-party audience data","Offer Sign-up",8,18,0,6000,300000],
-   ["Audio","Radio On-Air","Demo: Adults 35-64, drive time","Call",30,0,8,8000,2200000],
-   ["Audio","Streaming Radio","3rd-party audience data","Text-to-Offer",9,12,0,3000,400000],
-   ["Audio","SiriusXM","Demo: Adults 35-64, channels + streaming","Promo Code Redemption",7,6,0,4000,500000],
+  rows:[["Linear TV","Broadcast TV","Demo: Adults 35-64, news + prime","Appointment Booked",52,0,0,25000,3000000],
+   ["Linear TV","Cable TV","Demo: Adults 25-54, zones + networks","Free Estimate / Quote",34,0,0,12000,1500000],
+   ["Linear TV","Addressable TV","3rd-party household data","Free Estimate / Quote",20,0,0,9000,400000],
+   ["Streaming Video","CTV","Demo: Adults 25-54 + household income","Offer Sign-up",14,0,0,6000,300000],
+   ["Streaming Video","CTV","3rd-party audience data","Offer Sign-up",18,0,0,10000,450000],
+   ["Streaming Video","CTV","1st-party customer list match","Appointment Booked",15,0,0,5000,180000],
+   ["Streaming Video","OTT","3rd-party audience data","Offer Sign-up",12,0,0,6000,300000],
+   ["Audio","Radio On-Air","Demo: Adults 35-64, drive time","Call",36,0,0,8000,2200000],
+   ["Audio","Streaming Radio","3rd-party audience data","Text-to-Offer",12,0,0,3000,400000],
+   ["Audio","SiriusXM","Demo: Adults 35-64, channels + streaming","Promo Code Redemption",9,0,0,4000,500000],
    ["Search","Paid Search","Intent: brand + local service keywords","Appointment Booked",45,0,0,6000,150000],
    ["Search","ChatGPT Ads","Intent: conversational topics + prompts","Free Estimate / Quote",10,4,0,2500,120000],
    ["Social","Facebook","Demo: Adults 35-64 + interests","Offer Sign-up",22,12,0,3000,550000],
@@ -148,7 +148,7 @@ const CFG={
    ["Retargeting","Retargeting","1st-party site visitors","Free Estimate / Quote",12,15,0,1500,300000]],
   tvGroups:["Linear TV","Streaming Video","Audio"],
   strategies:[["Demo targeting","Demo:"],["3rd-party data","3rd-party"],["1st-party data","1st-party"],["Intent (keywords, prompts)","Intent:"],["Contextual","Contextual:"]],
-  note:"Demo with sample data for illustration. TV and radio are measured by tracked calls, texts, promo codes, vanity URLs, QR codes, spike lift, and household matching. Real reports use each client's media and CRM data, with the rules agreed before the campaign starts."}
+  note:"Demo with sample data for illustration. TV and radio are measured by tracked calls, text keywords, promo codes, and QR codes and vanity URLs in GA4. Real reports use each client's media and CRM data, with the rules agreed before the campaign starts."}
 }[MODE];
 
 const $=s=>document.querySelector(s);
@@ -187,10 +187,10 @@ function renderData(){
     h=`<tr><th class="t">Channel</th><th class="t">Target</th><th class="t">Tactic</th><th class="t">Conversion tracked</th><th>View-through (pixel)</th><th>Assisted (pixel)</th><th>First touch (GA4)</th><th>Mid touch (GA4)</th><th>Last touch (GA4)</th><th>Spend ($)</th></tr>`;
     h+=S.rows.map((r,i)=>`<tr><td class="t">${inp(i,0,r[0],"txt sm")}</td><td class="t">${inp(i,1,r[1],"txt")}</td><td class="t">${inp(i,2,r[2],"txt")}</td><td class="t">${sel(i,3,r[3])}</td>${[4,5,6,7,8,10].map(c=>`<td>${inp(i,c,r[c])}</td>`).join("")}</tr>`).join("");
   } else {
-    h=`<tr><th class="t">Media group</th><th class="t">Channel</th><th class="t">Targeting</th><th class="t">Conversion tracked</th><th>Direct response</th><th>View-through / HH match</th><th>Spike lift</th><th>Spend ($)</th><th>Impressions</th></tr>`;
+    h=`<tr><th class="t">Media group</th><th class="t">Channel</th><th class="t">Targeting</th><th class="t">Conversion tracked</th><th>Conversions</th><th>View-through (digital)</th><th>Spend ($)</th><th>Impressions</th></tr>`;
     let last="";
-    S.rows.forEach((r,i)=>{const tv=CFG.tvGroups.includes(r[0]);const sec=tv?"TV & radio":"Digital";if(sec!==last){h+=`<tr class="grp"><td colspan="9">${sec}</td></tr>`;last=sec;}
-      h+=`<tr><td class="t">${esc(r[0])}</td><td class="t">${inp(i,1,r[1],"txt sm")}</td><td class="t">${inp(i,2,r[2],"txt")}</td><td class="t">${sel(i,3,r[3])}</td><td>${inp(i,4,r[4])}</td><td>${inp(i,5,r[5])}</td><td>${tv?inp(i,6,r[6]):'<span style="color:var(--mut)">n/a</span>'}</td><td>${inp(i,7,r[7])}</td><td>${inp(i,8,r[8])}</td></tr>`;});
+    S.rows.forEach((r,i)=>{const tv=CFG.tvGroups.includes(r[0]);const sec=tv?"TV & radio":"Digital";if(sec!==last){h+=`<tr class="grp"><td colspan="8">${sec}</td></tr>`;last=sec;}
+      h+=`<tr><td class="t">${esc(r[0])}</td><td class="t">${inp(i,1,r[1],"txt sm")}</td><td class="t">${inp(i,2,r[2],"txt")}</td><td class="t">${sel(i,3,r[3])}</td><td>${inp(i,4,r[4])}</td><td>${tv?'<span style="color:var(--mut)">n/a</span>':inp(i,5,r[5])}</td><td>${inp(i,7,r[7])}</td><td>${inp(i,8,r[8])}</td></tr>`;});
   }
   $("#data").innerHTML=h;
   document.querySelectorAll("#data [data-r]").forEach(el=>{
@@ -207,7 +207,7 @@ function calc(){
       o.wtd=r[4]*w("view")+assisted*w("assist")+r[6]*w("first")+r[7]*w("mid")+r[8]*w("last");
       o.spend=r[10];o.last=r[8];o.cpl=o.last?o.spend/o.last:NaN;o.label=`${r[0]} · ${r[1]}`;
     } else {
-      o.wtd=r[4]*w("direct")+r[5]*w("vth")+(CFG.tvGroups.includes(r[0])?r[6]*w("spike"):0);
+      o.wtd=r[4]*w("direct")+(CFG.tvGroups.includes(r[0])?0:r[5]*w("vth"));
       o.spend=r[7];o.direct=r[4];o.cpd=o.direct?o.spend/o.direct:NaN;o.cpm=r[8]?o.spend/r[8]*1000:NaN;o.imp=r[8];o.label=`${r[1]} · ${r[2]}`;
     }
     o.adj=o.wtd*val/10;o.cpw=o.adj?o.spend/o.adj:NaN;return o;});
@@ -228,7 +228,7 @@ function renderResults(){
       if(under.cpw<under.cpl)ins.push(["Undervalued by last click",`<strong>${esc(under.label)}</strong> looks expensive on last click (${money(under.cpl)}) but costs ${money(under.cpw)} per weighted conversion. It assists more than it closes.`,"blue"]);}
     $("#viz").innerHTML="";
   } else {
-    h=`<tr><th class="t">Media group</th><th class="t">Channel</th><th class="t">Targeting</th><th>Weighted conv.</th><th>Value-adj. conv.</th><th>Spend</th><th>Cost per weighted conv.</th><th>Direct response</th><th>Cost per direct response</th><th>CPM</th></tr>`;
+    h=`<tr><th class="t">Media group</th><th class="t">Channel</th><th class="t">Targeting</th><th>Weighted conv.</th><th>Value-adj. conv.</th><th>Spend</th><th>Cost per weighted conv.</th><th>Conversions</th><th>Cost per conversion</th><th>CPM</th></tr>`;
     h+=R.map(o=>`<tr class="${o===best?"best":""}"><td class="t">${esc(o.r[0])}</td><td class="t">${esc(o.r[1])}</td><td class="t">${esc(o.r[2])}</td><td>${num1(o.wtd)}</td><td>${num1(o.adj)}</td><td>${money(o.spend)}</td><td><b>${money(o.cpw)}</b></td><td>${o.direct}</td><td>${money(o.cpd)}</td><td>${isFinite(o.cpm)?"$"+o.cpm.toFixed(2):"–"}</td></tr>`).join("");
     h+=`<tr class="tot"><td class="t">Total</td><td></td><td></td><td>${num1(T.wtd)}</td><td>${num1(T.adj)}</td><td>${money(T.spend)}</td><td>${money(T.cpw)}</td><td>${T.direct}</td><td>${money(T.cpd)}</td><td>${isFinite(T.cpm)?"$"+T.cpm.toFixed(2):"–"}</td></tr>`;
     const groups=[...new Set(S.rows.map(r=>r[0]))].map(g=>[g,agg(R.filter(o=>o.r[0]===g))]);
